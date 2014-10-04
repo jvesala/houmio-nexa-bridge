@@ -54,14 +54,16 @@ function handleSetCommand(message) {
   }
 }
 var deviceEventListener = telldus.addDeviceEventListener(function(deviceId, status) {
-  logger.debug('received event for device ' + deviceId + ' status: ' + status.name  + ' value: ' + status.value);
+  logger.debug('received event for device ' + deviceId + ' status: ' + status.name  +
+      (status.level != undefined ? ' level: ' + status.level : ""));
   var value = 0
-  console.log("status %j", status)
   if (status.name === 'ON' || status.name === 'OFF') {
-    if (isDimmer(deviceId)) value = (status.name === 'ON' ? "ff" : 0)
-    else value = (status.name === 'ON' ? 1 : 0)
+    if (isDimmer(deviceId))
+      value = (status.name === 'ON' ? "ff" : 0);
+    else
+      value = (status.name === 'ON' ? 1 : 0);
   } else {
-    //value = status.value.toString(16)
+    value = status.level.toString(16);
   }
   var message = JSON.stringify({ command: "knxbusdata", data: deviceId + " " + value });
   ws.send(message);
