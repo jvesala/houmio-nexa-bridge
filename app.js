@@ -60,7 +60,7 @@ var deviceEventListener = telldus.addDeviceEventListener(function(deviceId, stat
     if (isDimmer(deviceId)) value = (status.name === 'ON' ? "ff" : 0)
     else value = (status.name === 'ON' ? 1 : 0)
   } else {
-    value = status.value.toString(16)
+    //value = status.value.toString(16)
   }
   var message = JSON.stringify({ command: "knxbusdata", data: deviceId + " " + value });
   ws.send(message);
