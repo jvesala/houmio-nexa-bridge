@@ -54,8 +54,7 @@ function handleSetCommand(message) {
   }
 }
 var deviceEventListener = telldus.addDeviceEventListener(function(deviceId, status) {
-  logger.debug('received event for device ' + deviceId + ' status: ' + status.name);
-  // TODO support dimmer events
+  logger.debug('received event for device ' + deviceId + ' status: ' + status.name  + ' value: ' + status.value);
   var value = 0
   if (status.name === 'ON' || status.name === 'OFF') {
     if (isDimmer(deviceId)) value = (status.name === 'ON' ? "ff" : 0)
