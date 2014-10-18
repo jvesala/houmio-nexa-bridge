@@ -91,7 +91,7 @@ var deviceEventListener = telldus.addDeviceEventListener(function(deviceId, stat
   if (isButton(deviceId)) data = buttonData(deviceId, status.name);
   if (isDimmer(deviceId)) data = dimmerData(deviceId, status.name);
   if (data != undefined) {
-    var message = JSON.stringify({ command: "knxbusdata", data: "6/6/" + deviceId + " " + data });
+    var message = JSON.stringify({ command: "knxbusdata", data: data });
     ws.send(message);
     logger.debug('sent knxbusdata', message);
   }
