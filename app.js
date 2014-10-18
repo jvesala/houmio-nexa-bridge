@@ -38,19 +38,19 @@ ws.on('message', function(msg) {
 // todo: proper way method to separate switches, dimmers and buttons
 function isSwitch(deviceId) {
   return _.some(devices, function(device) {
-    return (device.id == deviceId) && device.name.indexOf("Nexa") > 0;
+    return (device.id == deviceId) && device.name.indexOf("Nexa") >= 0;
   });
 }
 
 function isDimmer(deviceId) {
   return _.some(devices, function(device) {
-    return (device.id == deviceId) && device.model.indexOf("dimmer") > 0;
+    return (device.id == deviceId) && device.model.indexOf("dimmer") >= 0;
   });
 }
 
 function isButton(deviceId) {
   return _.some(devices, function(device) {
-    return (device.id == deviceId) && device.name.indexOf("Button") > 0;
+    return (device.id == deviceId) && device.name.indexOf("Button") >= 0;
   });
 }
 
