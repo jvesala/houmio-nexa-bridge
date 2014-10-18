@@ -35,9 +35,22 @@ ws.on('message', function(msg) {
   }
 })
 
+// todo: proper way method to separate switches, dimmers and buttons
+function isSwitch(deviceId) {
+  return _.some(devices, function(device) {
+    return (device.id == deviceId) && device.name.indexOf("Nexa") > 0;
+  });
+}
+
 function isDimmer(deviceId) {
   return _.some(devices, function(device) {
     return (device.id == deviceId) && device.model.indexOf("dimmer") > 0;
+  });
+}
+
+function isButton(deviceId) {
+  return _.some(devices, function(device) {
+    return (device.id == deviceId) && device.name.indexOf("Button") > 0;
   });
 }
 
@@ -58,10 +71,8 @@ var deviceEventListener = telldus.addDeviceEventListener(function(deviceId, stat
       (status.level != undefined ? ' level: ' + status.level : ""));
   var value = undefined
   if (status.name === 'ON' || status.name === 'OFF') {
-    if (isDimmer(deviceId))
-      value = (status.name === 'ON' ? "ff" : 0);
-    else
-      value = (status.name === 'ON' ? 1 : 0);
+    if (isSwitch(deviceId) || isButton(deviceId)) value = (status.name === 'ON' ? 1 : 0);
+    if (isDimmer(deviceId)) value = (status.name === 'ON' ? "ff" : 0);
   } else {
     // TODO: throttle dimmer result values to prevent premature feedback during dimming
     //value = status.level.toString(16);
