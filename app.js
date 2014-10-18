@@ -54,6 +54,23 @@ function isButton(deviceId) {
   });
 }
 
+function switchData(deviceId, eventName) {
+  return deviceId + " " + (eventName === 'ON' ? 1 : 0);
+}
+
+function dimmerData(deviceId, eventName) {
+  if (eventName == 'ON' || eventName == 'OFF') {
+    return deviceId + " " + (eventName === 'ON' ? "ff" : 0);
+  } else {
+    // TODO: throttle dimmer result values to prevent premature feedback during dimming
+    return undefined
+  }
+}
+
+function buttonData(deviceId, eventName) {
+  return "6/6/" + deviceId + " " + (eventName === 'ON' ? 1 : 0);
+}
+
 function handleSetCommand(message) {
   var deviceId = parseInt(message.data.groupaddress);
   var dimmer = isDimmer(deviceId);
@@ -69,16 +86,12 @@ function handleSetCommand(message) {
 var deviceEventListener = telldus.addDeviceEventListener(function(deviceId, status) {
   logger.debug('received event for device ' + deviceId + ' status: ' + status.name  +
       (status.level != undefined ? ' level: ' + status.level : ""));
-  var value = undefined
-  if (status.name === 'ON' || status.name === 'OFF') {
-    if (isSwitch(deviceId) || isButton(deviceId)) value = (status.name === 'ON' ? 1 : 0);
-    if (isDimmer(deviceId)) value = (status.name === 'ON' ? "ff" : 0);
-  } else {
-    // TODO: throttle dimmer result values to prevent premature feedback during dimming
-    //value = status.level.toString(16);
-  }
-  if (value != undefined) {
-    var message = JSON.stringify({ command: "knxbusdata", data: deviceId + " " + value });
+  var data = undefined;
+  if (isSwitch(deviceId)) data = switchData(deviceId, status.name);
+  if (isButton(deviceId)) data = buttonData(deviceId, status.name);
+  if (isDimmer(deviceId)) data = dimmerData(deviceId, status.name);
+  if (data != undefined) {
+    var message = JSON.stringify({ command: "knxbusdata", data: "6/6/" + deviceId + " " + data });
     ws.send(message);
     logger.debug('sent knxbusdata', message);
   }
